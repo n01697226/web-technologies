@@ -20,6 +20,7 @@ const server = http.createServer((req, res) => {
       res.end("Hello to the PUT method");
     }
   } else {
+    res.writeHead(404, "Page Not Found");
     res.end("404 page not found");
   }
 });
