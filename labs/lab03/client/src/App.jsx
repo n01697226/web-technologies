@@ -1,35 +1,112 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [message, setMessage] = useState("");
+  const [files, setFiles] = useState([]);
+  const [randomImages, setRandomImages] = useState([]);
+  const [dogImage, setDogImage] = useState(null);
+
+  const handleMultipleUpload = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    Array.from(files).forEach((file) => formData.append("files", file));
+
+    try {
+      const response = await fetch(`http://localhost:8000/save/multiple`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+      setMessage(data.message || "Upload successful");
+    } catch (error) {
+      console.log(error);
+      setMessage("Upload failed");
+    }
+  };
+
+  const fetchRandomImages = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000/fetch/multiple`);
+      const data = await response.json();
+
+      setRandomImages(data.files || []);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchDogImage = async () => {
+    try {
+      const response = await fetch(`https://dog.ceo/api/breeds/image/random`);
+      const data = await response.json();
+
+      setDogImage(data.message);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const saveDogImage = async () => {
+    if (!dogImage) return;
+
+    try {
+      const filename = `dog-${Date.now()}.jpg`;
+
+      await fetch(`http://localhost:8000/save/dog-image`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: dogImage, filename }),
+      });
+
+      setMessage("Dog image saved successfully");
+    } catch (error) {
+      console.log(error);
+      setMessage("Failed to save dog image");
+    }
+  };
 
   return (
-    <>
+    <div>
+      <h2>Multiple File Uploader</h2>
+      <form onSubmit={handleMultipleUpload}>
+        <input
+          type="file"
+          multiple
+          onChange={(e) => setFiles(e.target.files)}
+          required
+        />
+        <button type="submit">Upload</button>
+      </form>
+
+      <button onClick={fetchRandomImages}>Fetch Random Images</button>
       <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        {randomImages.map((image, index) => (
+          <img
+            key={index}
+            src={`http://localhost:8000${image}`}
+            alt="Random"
+            style={{ maxWidth: "300px", margin: "10px" }}
+          />
+        ))}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+
+      <button onClick={fetchDogImage}>Fetch Random Dog Image</button>
+      {dogImage && (
+        <div>
+          <img
+            src={dogImage}
+            alt="Dog"
+            style={{ maxWidth: "300px", margin: "10px" }}
+          />
+          <button onClick={saveDogImage}>Save Dog Image</button>
+        </div>
+      )}
+
+      {message && <p>{message}</p>}
+    </div>
+  );
 }
 
-export default App
+export default App;

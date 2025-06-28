@@ -15,7 +15,7 @@ router.get("/multiple", (req, res) => {
     return res.status(404).json({ message: "Empty directory" });
   }
 
-  const filePaths = randomFiles.map((file) => path.join(uploadsDir, file));
+  const filePaths = randomFiles.map((file) => `/uploads/${file}`);
   res.json({ files: filePaths });
 });
 

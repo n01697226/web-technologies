@@ -1,8 +1,9 @@
-// /server/index.js
 import express from "express";
 import cors from "cors";
 import save_router from "./routers/save_router.js";
 import fetch_router from "./routers/fetch_router.js";
+import path from "path";
+import { uploadsDir } from "./middleware/multer.js";
 
 // Get __dirname equivalent
 const app = express();
@@ -12,6 +13,7 @@ const PORT = process.env.PORT || 8000;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use("/uploads", express.static(uploadsDir));
 
 // routing
 app.use("/save", save_router);
