@@ -1,0 +1,84 @@
+Question 01.01
+db.laptops.find({ price: { $eq: 999.99 } })
+
+Question 01.02
+db.laptops.find({ price: { $ne: 1299.99 } })
+
+Question 01.03
+db.laptops.find({ price: { $gt: 1500 } })
+
+Question 01.04
+db.laptops.find({ price: { $gte: 1399.99 } })
+
+Question 02.01
+db.laptops.find({
+  $or: [
+    { price: { $lt: 1000 } },
+    { stock: { $gt: 10 } }
+  ]
+})
+
+Question 02.02
+db.laptops.find({
+  $and: [
+    { price: { $lt: 1000 } },
+    { stock: { $gt: 10 } }
+  ]
+})
+
+Question 02.03
+db.laptops.find({
+  price: { $ne: 999.99 }
+})
+
+Question 03.01
+db.laptops.find({
+  description: { $exists: true }
+})
+
+Question 03.02
+db.laptops.find({
+  reviews: { $exists: false }
+})
+
+Question 04.01
+db.laptops.find({
+  genres: "Gaming"
+})
+
+Question 04.02
+db.laptops.find({
+  genres: { $in: ["Business"] }
+})
+
+Question 05
+db.laptops.createIndex({
+  model: "text",
+  brand: "text",
+  processor: "text"
+})
+
+db.laptops.find({
+  $text: {
+    $search: "performance"
+  }
+})
+
+Question 06
+db.laptops.updateOne(
+  { model: "MacBook Air" },
+  {
+    $push: {
+      reviews: {
+        user: "John Doe",
+        rating: 4
+      }
+    }
+  }
+)
+
+db.laptops.find(
+  { model: "MacBook Air" },
+  { model: 1, reviews: 1, _id: 0 }
+)
+
