@@ -14,7 +14,7 @@ app.use(express.json());
 app.use("/recipe", recipeRoutes);
 
 mongoose
-  .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(MONGO_URI)
   .then(() => {
     console.log("MongoDB connected");
     app.listen(PORT, () =>
