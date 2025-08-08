@@ -1,0 +1,41 @@
+.home {
+  width: 95%;
+  margin: 50px auto;
+}
+
+.hero {
+  text-align: center;
+  background-color: #f5f5f5;
+  padding: 40px 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+}
+
+.hero h1 {
+  font-size: 5rem;
+  margin-bottom: 10px;
+}
+
+.about {
+  margin-bottom: 30px;
+}
+
+.about h2 {
+  color: #007acc;
+  margin-bottom: 20px;
+}
+
+.about p {
+  margin: 20px 0;
+  color: #444;
+}
+
+.sales-preview {
+  padding: 20px 0;
+  background-color: #f9f9f9;
+  border-top: 1px dashed #ccc;
+}
+
+.sales-preview h2 {
+  margin-bottom: 10px;
+}
