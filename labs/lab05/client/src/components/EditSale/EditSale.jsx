@@ -1,9 +1,12 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../../../config";
-import "./CreateSale.css";
+import "../CreateSale/CreateSale.css";
 
-function CreateSale() {
+function EditSale() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+
   const [title, setTitle] = useState("");
   const [startDate, setStartDate] = useState("");
   const [startTime, setStartTime] = useState("");
@@ -12,7 +15,39 @@ function CreateSale() {
   const [location, setLocation] = useState("");
   const [details, setDetails] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSale = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch(`${API_BASE_URL}/sales/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!res.ok) throw new Error("Failed to load sale");
+
+        const data = await res.json();
+
+        const start = new Date(data.startDate);
+        const end = new Date(data.endDate);
+
+        setTitle(data.title || "");
+        setStartDate(start.toISOString().split("T")[0]);
+        setStartTime(start.toISOString().split("T")[1].slice(0, 5));
+        setEndDate(end.toISOString().split("T")[0]);
+        setEndTime(end.toISOString().split("T")[1].slice(0, 5));
+        setLocation(data.location || "");
+        setDetails(data.details || "");
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSale();
+  }, [id]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,12 +66,12 @@ function CreateSale() {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
-        setError("You must be logged in to create a sale.");
+        setError("You must be logged in to edit a sale.");
         return;
       }
 
-      const response = await fetch(`${API_BASE_URL}/sales`, {
-        method: "POST",
+      const response = await fetch(`${API_BASE_URL}/sales/${id}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -46,27 +81,21 @@ function CreateSale() {
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.message || "Failed to create sale.");
+        throw new Error(data.message || "Failed to update sale.");
       }
 
-      alert("Your sale was created successfully!");
-
-      setTitle("");
-      setStartDate("");
-      setStartTime("");
-      setEndDate("");
-      setEndTime("");
-      setLocation("");
-      setDetails("");
+      navigate("/my-sales");
     } catch (err) {
       setError(err.message);
     }
   };
 
+  if (loading) return <p style={{ textAlign: "center" }}>Loading sale...</p>;
+
   return (
     <div className="create-sale-container">
       <form className="create-sale-form" onSubmit={handleSubmit}>
-        <h2>Create a Garage Sale</h2>
+        <h2>Edit Garage Sale</h2>
 
         {error && <p style={{ color: "red" }}>{error}</p>}
 
@@ -147,10 +176,10 @@ function CreateSale() {
           rows={4}
         />
 
-        <button type="submit">Create Sale</button>
+        <button type="submit">Update Sale</button>
       </form>
     </div>
   );
 }
 
-export default CreateSale;
+export default EditSale;

@@ -1,0 +1,80 @@
+.my-sales-container {
+  width: 95%;
+  margin: 50px auto;
+  padding: 0 20px;
+}
+
+h2 {
+  text-align: center;
+  color: #007acc;
+  margin-bottom: 20px;
+}
+
+.sales-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.sale-card {
+  background-color: #f3f3f3;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 0 8px rgba(0, 122, 204, 0.2);
+  transition: transform 0.2s ease;
+}
+
+.sale-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 122, 204, 0.3);
+}
+
+.sale-card h3 {
+  margin-top: 0;
+  color: #007acc;
+}
+
+.sale-card p {
+  margin: 8px 0;
+  color: #333;
+  font-size: 1.25rem;
+}
+
+.error {
+  color: red;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.sale-actions {
+  margin-top: 15px;
+  display: flex;
+  gap: 10px;
+}
+
+.sale-actions button {
+  flex: 1;
+  padding: 10px 15px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  color: white;
+}
+
+.sale-actions button:first-child {
+  background-color: #007acc;
+}
+
+.sale-actions button:first-child:hover {
+  background-color: #005fa3;
+}
+
+.sale-actions button:last-child {
+  background-color: #d9534f;
+}
+
+.sale-actions button:last-child:hover {
+  background-color: #b52b27;
+}

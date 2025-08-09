@@ -1,6 +1,39 @@
+import { useState, useEffect } from "react";
+import { API_BASE_URL } from "../../../config";
 import "./Home.css";
 
 function Home() {
+  const [sales, setSales] = useState([]);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSales = async () => {
+      setError("");
+      setLoading(true);
+      try {
+        const response = await fetch(`${API_BASE_URL}/sales`);
+        if (!response.ok) {
+          const data = await response.json();
+          throw new Error(data.message || "Failed to fetch sales.");
+        }
+        const data = await response.json();
+        setSales(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSales();
+  }, []);
+
+  const formatDate = (dateStr) => {
+    const options = { year: "numeric", month: "short", day: "numeric" };
+    return new Date(dateStr).toLocaleDateString(undefined, options);
+  };
+
   return (
     <div className="home">
       <section className="hero">
@@ -36,7 +69,37 @@ function Home() {
 
       <section className="sales-preview">
         <h2>Upcoming Garage Sales</h2>
-        <p>Sales will appear here once they are added!</p>
+
+        {loading && <p>Loading sales...</p>}
+        {error && <p className="error">{error}</p>}
+
+        {!loading && !error && sales.length === 0 && (
+          <p>Sales will appear here once they are added!</p>
+        )}
+
+        {!loading && !error && sales.length > 0 && (
+          <div className="sales-grid">
+            {sales.map((sale) => (
+              <div key={sale._id} className="sale-card">
+                <h3>{sale.title}</h3>
+                <p>
+                  <strong>Start:</strong> {formatDate(sale.startDate)}
+                </p>
+                <p>
+                  <strong>End:</strong> {formatDate(sale.endDate)}
+                </p>
+                <p>
+                  <strong>Location:</strong> {sale.location}
+                </p>
+                {sale.details && (
+                  <p>
+                    <strong>Details:</strong> {sale.details}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );
